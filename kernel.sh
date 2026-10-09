@@ -182,6 +182,7 @@ WAKTU=$(date +"%F-%S")
 
 	if [ $COMPILER = "clang" ]
 	then
+		TC_DIR=$KERNEL_DIR/clang-llvm
 		git clone --depth=1 https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r547379.git ${TC_DIR}
 		export LD_LIBRARY_PATH=$TC_DIR/bin/:$LD_LIBRARY_PATH
   		export LLVM=1
