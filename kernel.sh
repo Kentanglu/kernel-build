@@ -82,7 +82,7 @@ DEVICE="Miatoll"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=vendor/miatoll_defconfig
+DEFCONFIG=vendor/xiaomi/miatoll_defconfig
 
 # Specify compiler.
 # 'clang' or 'gcc'
