@@ -23,8 +23,8 @@ WORKDIR="$(pwd)"
 KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
-git clone --single-branch --depth=1 https://github.com/Asyanx/Sea_Kernel-Fog.git -b fog-r-oss-release $KERNEL && cd $KERNEL
-export LOCALVERSION=3/RedLiens🐙✨
+git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
+export LOCALVERSION=⚓
 
 # Bail out if script fails
 set -e
@@ -53,25 +53,41 @@ cdir()
 KERNEL_DIR="$(pwd)"
 BASEDIR="$(basename "$KERNEL_DIR")"
 
+# PATCH KERNELSU & RELEASE VERSION
+KSU=1
+RELEASE=R1
+
+if [ $KSU = 1 ]
+then
+	KSU_GIT_VERSION=$(cd KernelSU && git rev-list --count HEAD)
+	KERNELSU_VERSION=$(($KSU_GIT_VERSION + 10000 + 200))
+
 # The name of the Kernel, to name the ZIP
-ZIPNAME="sea-RedLiens-T1"
+ZIPNAME="Sea"
+if [ $KSU = 1 ]
+then
+   VER="$RELEASE-KSU"
+else
+    VER="$RELEASE-NONKSU"
+fi
 
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
+HOSTR="R1"
 
 # Architecture
 ARCH=arm64
 
 # The name of the device for which the kernel is built
-MODEL="Redmi 10C"
+MODEL="Redmi Note 9 Pro"
 
 # The codename of the device
-DEVICE="fog"
+DEVICE="Miatoll"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=vendor/fog-perf_defconfig
+DEFCONFIG=vendor/miatoll_defconfig
 
 # Specify compiler.
 # 'clang' or 'gcc'
@@ -105,15 +121,6 @@ FILES=Image.gz
 # Build dtbo.img (select this only if your source has support to building dtbo.img)
 # 1 is YES | 0 is NO(default)
 BUILD_DTBO=0
-
-# PATCH KERNELSU
-KSU=0
-if [ $KSU = 1 ]
-then
-curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-KSU_GIT_VERSION=$(cd KernelSU && git rev-list --count HEAD)
-KERNELSU_VERSION=$(($KSU_GIT_VERSION + 10000 + 200))
-fi
 
 # Sign the zipfile
 # 1 is YES | 0 is NO
@@ -180,23 +187,26 @@ WAKTU=$(date +"%F-%S")
 
 	if [ $COMPILER = "clang" ]
 	then
-                git clone https://gitlab.com/ElectroPerf/atom-x-clang clang-llvm --depth=1
-		git clone https://github.com/ZyCromerZ/aarch64-linux-android-4.9 gcc64 --depth=1
-                git clone https://github.com/ZyCromerZ/arm-linux-androideabi-4.9 gcc32 --depth=1
+                mkdir clang-llvm
+		wget https://github.com/ZyCromerZ/Clang/releases/download/22.0.0git-20250805-release/Clang-22.0.0git-20250805.tar.gz -O "Clang-22.0.0git-20250805.tar.gz"
+                tar -xf Clang-22.0.0git-20250805.tar.gz -C clang-llvm
+		git clone https://github.com/ZyCromerZ/aarch64-zyc-linux-gnu -b 14 gcc64 --depth=1
+                git clone https://github.com/ZyCromerZ/arm-zyc-linux-gnueabi -b 14 gcc32 --depth=1
 		GCC64_DIR=$KERNEL_DIR/gcc64
 		GCC32_DIR=$KERNEL_DIR/gcc32
-                for64=aarch64-linux-android
-                for32=arm-linux-androideabi
-		ClangMoreStrings="AR=llvm-ar NM=llvm-nm AS=llvm-as STRIP=llvm-strip OBJCOPY=llvm-objcopy OBJDUMP=llvm-objdump READELF=llvm-readelf HOSTAR=llvm-ar HOSTAS=llvm-as LD_LIBRARY_PATH=$clangDir/lib LD=ld.lld HOSTLD=ld.lld"
+  		for64=aarch64-zyc-linux-gnu
+  		for32=arm-zyc-linux-gnueabi
 		# Toolchain Directory defaults to clang-llvm
 		TC_DIR=$KERNEL_DIR/clang-llvm
   		export LLVM=1
 		export LLVM_IAS=1
                 export LD_LIBRARY_PATH=$TC_DIR/bin/:$GCC64_DIR/bin/:$GCC32_DIR/bin/:$LD_LIBRARY_PATH
+		MorePlusPlus="LD=$for64-ld LDGOLD=$for64-ld.gold HOSTLD=${TC_DIR}/bin/ld $MorePlusPlus"
+                MorePlusPlus="LD_COMPAT=${GCC32_DIR}/bin/$for32-ld $MorePlusPlus"
 	fi
 
 	msger -n "|| Cloning Anykernel ||"
-	git clone --depth=1 https://github.com/Kentanglu/AnyKernel3-680 -b master AnyKernel3
+	git clone --depth=1 https://github.com/Kentanglu/AnyKernel33 -b miatoll AnyKernel3
 
 	if [ $BUILD_DTBO = 1 ]
 	then
@@ -210,6 +220,7 @@ WAKTU=$(date +"%F-%S")
 exports()
 {
 	KBUILD_BUILD_USER=$AUTHOR
+	KBUILD_BUILD_HOST=$HOSTR
 	SUBARCH=$ARCH
 
 	if [ $COMPILER = "clang" ]
@@ -267,10 +278,12 @@ build_kernel()
 		make mrproper && rm -rf out
 	fi
 
-	if [ "$PTTG" = 1 ]
+	if [ "$KSU" = 1 ]
  	then
-		tg_post_msg "<b>CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>KernelSU Version : </b><code>$KERNELSU_VERSION</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>"
-	fi
+		tg_post_msg "<b>Sea CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>KernelSU: </b><code>$KERNELSU_VERSION</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>"
+	else
+		tg_post_msg "<b>Sea CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>NON KernelSU:<code>This is not KSU</code>%0A</b><b>Top Commit : </b><code>$COMMIT_HEAD</code>"
+    	fi
 
 	make O=out $DEFCONFIG
 	if [ $DEF_REG = 1 ]
@@ -281,35 +294,18 @@ build_kernel()
 
 						This is an auto-generated commit"
 	fi
-
-        if [ $KSU = 1 ]
-	then
-           for patch_file in $KERNEL_DIR/patchs/KernelSU.patch
-	do
-           patch -p1 < "$patch_file"
-        done
-        fi
-
-        if [ $KSU = 1 ]
-	then
-           for patch1_file in $KERNEL_DIR/patchs/KernelSU_umount.patch
-	do
-           patch -p1 < "$patch1_file"
-        done
-        fi 
-
+        
 	BUILD_START=$(date +"%s")
-
 	if [ $COMPILER = "clang" ]
 	then
 		MAKE+=(
   			CC=clang \
-			CROSS_COMPILE=$for64- \
-			CROSS_COMPILE_ARM32=$for32- \
+			CROSS_COMPILE=aarch64-zyc-linux-gnu- \
+			CROSS_COMPILE_ARM32=arm-zyc-linux-gnueabi- \
    			CLANG_TRIPLE=aarch64-linux-gnu- \
         		HOSTCC=gcc \
-	  		HOSTCXX=g++ ${ClangMoreStrings}
-	) 
+	  		HOSTCXX=g++ ${MorePlusPlus}
+     )
 	elif [ $COMPILER = "gcc" ]
 	then
 		MAKE+=(
@@ -379,10 +375,10 @@ gen_zip()
 		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
 	fi
 	cdir AnyKernel3
-	zip -r $DEVICE-$ZIPNAME-"$WAKTU" . -x ".git*" -x "README.md" -x "*.zip"
+	zip -r $ZIPNAME-$DEVICE-$VER-"$WAKTU" . -x ".git*" -x "README.md" -x "*.zip"
 
 	## Prepare a final zip variable
-	ZIP_FINAL="$DEVICE-$ZIPNAME-$WAKTU"
+	ZIP_FINAL="$ZIPNAME-$DEVICE-$VER-$WAKTU"
 
 	if [ $SIGN = 1 ]
 	then
