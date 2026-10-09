@@ -55,22 +55,16 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=1
-RELEASE=R1
-
-if [ $KSU = 1 ]
-then
-	KSU_GIT_VERSION=$(cd KernelSU && git rev-list --count HEAD)
-	KERNELSU_VERSION=$(($KSU_GIT_VERSION + 10000 + 200))
-fi
-
-# The name of the Kernel, to name the ZIP
-ZIPNAME="Sea"
+RELEASE=R
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSU"
 else
     VER="$RELEASE-NONKSU"
 fi
+
+# The name of the Kernel, to name the ZIP
+ZIPNAME="Sea"
 
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
