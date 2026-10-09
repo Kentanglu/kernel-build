@@ -61,6 +61,7 @@ if [ $KSU = 1 ]
 then
 	KSU_GIT_VERSION=$(cd KernelSU && git rev-list --count HEAD)
 	KERNELSU_VERSION=$(($KSU_GIT_VERSION + 10000 + 200))
+fi
 
 # The name of the Kernel, to name the ZIP
 ZIPNAME="Sea"
