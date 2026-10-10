@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
-export LOCALVERSION=⚓
+export LOCALVERSION=/r1.0⚓
 
 # Bail out if script fails
 set -e
