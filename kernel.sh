@@ -55,7 +55,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=1
-RELEASE=R1s+
+RELEASE=R1s+Uclamp
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
@@ -69,7 +69,7 @@ ZIPNAME="Sea"
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
-HOSTR="r1.5+"
+HOSTR="r1.5+Uclamp"
 
 # Architecture
 ARCH=arm64
