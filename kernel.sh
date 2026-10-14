@@ -23,8 +23,8 @@ WORKDIR="$(pwd)"
 KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
-git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 -b 16 $KERNEL && cd $KERNEL
-export LOCALVERSION=/r1.5+🦏
+git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_blossom $KERNEL && cd $KERNEL
+export LOCALVERSION=/r1.0+🐠
 
 # Bail out if script fails
 set -e
@@ -55,7 +55,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=0
-RELEASE=R1s+
+RELEASE=R1+
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
@@ -69,20 +69,20 @@ ZIPNAME="Sea"
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
-HOSTR="r1.5+"
+HOSTR="r1.0+"
 
 # Architecture
 ARCH=arm64
 
 # The name of the device for which the kernel is built
-MODEL="Redmi Note 9 Pro"
+MODEL="Redmi 9c"
 
 # The codename of the device
-DEVICE="Miatoll"
+DEVICE="Blossom"
 
 # The defconfig which should be used. Get it from config.gz from
 # your device or check source
-DEFCONFIG=vendor/xiaomi/miatoll_defconfig
+DEFCONFIG=blossom_defconfig
 
 # Specify compiler.
 # 'clang' or 'gcc'
