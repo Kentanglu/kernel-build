@@ -23,7 +23,7 @@ WORKDIR="$(pwd)"
 KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
-git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
+git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 -b 16 $KERNEL && cd $KERNEL
 export LOCALVERSION=/r1.5+🦏
 
 # Bail out if script fails
@@ -60,7 +60,7 @@ if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
 else
-    VER="$RELEASE-NONKSU"
+    VER="$RELEASE-NONKSU/N"
 fi
 
 # The name of the Kernel, to name the ZIP
