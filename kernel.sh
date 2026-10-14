@@ -60,7 +60,7 @@ if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
 else
-    VER="$RELEASE-NONKSU/N"
+    VER="$RELEASE"
 fi
 
 # The name of the Kernel, to name the ZIP
