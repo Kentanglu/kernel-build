@@ -190,7 +190,7 @@ WAKTU=$(date +"%F-%S")
 	fi
 
 	msger -n "|| Cloning Anykernel ||"
-	git clone --depth=1 https://github.com/Kentanglu/AnyKernel33 -b miatoll AnyKernel3
+	git clone --depth=1 https://github.com/Kentanglu/anykernel3-blossom AnyKernel3
 
 	if [ $BUILD_DTBO = 1 ]
 	then
