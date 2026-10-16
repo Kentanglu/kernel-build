@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_blossom $KERNEL && cd $KERNEL
-export LOCALVERSION=/r1.0+🐠
+export LOCALVERSION=/r1.1+🐠
 
 # Bail out if script fails
 set -e
@@ -55,7 +55,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=0
-RELEASE=R1+
+RELEASE=R1I+
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
