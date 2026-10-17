@@ -24,29 +24,10 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 -b 16-ksu $KERNEL && cd $KERNEL
+export LOCALVERSION=/r1.7+
+
 # Bail out if script fails
 set -e
-
-# Pick a random emoji from the official Unicode emoji-test list.
-EMOJI_FILE="$WORKDIR/.emoji-test.txt"
-if [ ! -s "$EMOJI_FILE" ]; then
-    curl -fsSL "https://unicode.org/Public/emoji/latest/emoji-test.txt" -o "$EMOJI_FILE"
-fi
-RANDOM_EMOJI=$(python3 - "$EMOJI_FILE" <<'PY'
-import random
-import sys
-
-items = []
-with open(sys.argv[1], encoding="utf-8") as emoji_file:
-    for line in emoji_file:
-        if "; fully-qualified" not in line or "#" not in line:
-            continue
-        emoji = line.split("#", 1)[1].strip().split()[0]
-        if emoji:
-            items.append(emoji)
-print(random.choice(items) if items else "🐳")
-PY
-)
 
 # Function to show an informational message
 msger()
@@ -72,40 +53,15 @@ cdir()
 KERNEL_DIR="$(pwd)"
 BASEDIR="$(basename "$KERNEL_DIR")"
 
-# Detect KernelSU and its version from the checked-out source.
-KSU=0
-KERNELSU_VERSION="Not detected"
-for KSU_PATH in \
-    "$KERNEL_DIR/drivers/kernelsu" ; do
-    if [ -d "$KSU_PATH" ]; then
-        KSU=1
-        KERNELSU_VERSION="3.3.0"
-        break
-    fi
-done
-
-# Advance the release only after a valid ZIP was produced in the previous run.
-VERSION_FILE="$WORKDIR/.kernel_build_version"
-BUILD_NUMBER=0
-if [ -s "$VERSION_FILE" ]; then
-    BUILD_NUMBER=$(cat "$VERSION_FILE")
-    case "$BUILD_NUMBER" in
-        ''|*[!0-9]*) BUILD_NUMBER=0 ;;
-    esac
-fi
-if [ "$BUILD_NUMBER" -eq 0 ]; then
-    RELEASE="R1.7+"
-else
-    RELEASE="R1.7.${BUILD_NUMBER}+"
-fi
-
-if [ "$KSU" = 1 ]; then
-    VER="$RELEASE-KSUN"
+# PATCH KERNELSU & RELEASE VERSION
+KSU=1
+RELEASE=R1.7+
+if [ $KSU = 1 ]
+then
+   VER="$RELEASE-NONEMOTE-KSUN"
 else
     VER="$RELEASE"
 fi
-
-export LOCALVERSION="/${RELEASE,,}${RANDOM_EMOJI}"
 
 # The name of the Kernel, to name the ZIP
 ZIPNAME="Sea"
@@ -113,7 +69,7 @@ ZIPNAME="Sea"
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
-HOSTR="$RELEASE"
+HOSTR="r1.7+"
 
 # Architecture
 ARCH=arm64
@@ -148,7 +104,7 @@ if [ $PTTG = 1 ]
 then
 	# Set Telegram Chat ID
 	CHATID="-1001910249307"
-	TOKEN="REPLACE_WITH_YOUR_NEW_TELEGRAM_BOT_TOKEN"
+	TOKEN="5501360993:AAFLnvOrkUpsFJktYu-snmimKNoGk7_WVw8"
 fi
 
 # Generate a full DEFCONFIG prior building. 1 is YES | 0 is NO(default)
@@ -274,11 +230,11 @@ exports()
 
 tg_post_msg()
 {
-curl -sS -X POST "$BOT_MSG_URL" \
-    -d "chat_id=$CHATID" \
-    -d "disable_web_page_preview=true" \
-    -d "parse_mode=HTML" \
-    --data-urlencode "text=$1"
+	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$CHATID" \
+	-d "disable_web_page_preview=true" \
+	-d "parse_mode=html" \
+	-d text="$1"
+
 }
 
 ##----------------------------------------------------------##
@@ -308,9 +264,9 @@ build_kernel()
 
 	if [ "$KSU" = 1 ]
  	then
-		tg_post_msg "<b>Sea CI Build Triggered $RANDOM_EMOJI</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>KernelSU: </b><code>$KERNELSU_VERSION</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>"
+		tg_post_msg "<b>Sea CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>KernelSU: </b><code>$KERNELSU_VERSION</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>"
 	else
-		tg_post_msg "<b>Sea CI Build Triggered $RANDOM_EMOJI</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>KernelSU: </b><code>Not detected</code>%0A<b>Top Commit : </b><code>$COMMIT_HEAD</code>"
+		tg_post_msg "<b>Sea CI Build Triggered</b>%0A<b>Docker OS: </b><code>$DISTRO</code>%0A<b>Kernel Version : </b><code>$KERVER</code>%0A<b>Date : </b><code>$(TZ=Asia/Jakarta date)</code>%0A<b>Device : </b><code>$MODEL [$DEVICE]</code>%0A<b>Host Core Count : </b><code>$PROCS</code>%0A<b>Compiler Used : </b><code>$KBUILD_COMPILER_STRING</code>%0A<b>NON KernelSU:<code>This is not KSU</code>%0A</b><b>Top Commit : </b><code>$COMMIT_HEAD</code>"
     	fi
 
 	make O=out $DEFCONFIG
@@ -444,14 +400,7 @@ gen_zip()
             msger -e "Signed ZIP was not created"
             return 1
         fi
-        if ! unzip -t "$ZIP_FINAL.zip" >/dev/null 2>&1; then
-            msger -e "Signed ZIP is corrupted: $ZIP_FINAL.zip"
-            return 1
-        fi
     fi
-
-    # Increment only after the final (signed, if enabled) ZIP is valid.
-    printf '%s\n' "$((BUILD_NUMBER + 1))" > "$VERSION_FILE"
 
     ## Upload ZIP to Telegram
     if [ "$PTTG" = 1 ]; then
