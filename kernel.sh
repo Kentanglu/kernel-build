@@ -89,7 +89,8 @@ for KSU_PATH in \
             KSU_VERSION_TEXT=$(grep -Ehi -m 1 '(^|[[:space:]])(VERSION|KSU_VERSION|VERSION_NAME)[[:space:]_:=]+|KernelSU[^[:alnum:]]*[vV]?[0-9]+([.][0-9]+)*' "$KSU_VERSION_FILE" 2>/dev/null || true)
             KERNELSU_VERSION=$(printf '%s\n' "$KSU_VERSION_TEXT" | grep -Eo '[vV]?[0-9]+([.][0-9]+)+' | head -n 1 || true)
         fi
-        [ -n "$KERNELSU_VERSION" ] || KERNELSU_VERSION="Detected (version unavailable)"
+        # KernelSU-Next version is manually pinned for this source tree.
+        KERNELSU_VERSION="3.3.0"
         break
     fi
 done
