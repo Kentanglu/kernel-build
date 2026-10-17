@@ -76,12 +76,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 KSU=0
 KERNELSU_VERSION="Not detected"
 for KSU_PATH in \
-    "$KERNEL_DIR/KernelSU" \
-    "$KERNEL_DIR/KernelSU-Next" \
-    "$KERNEL_DIR/drivers/kernelsu" \
-    "$KERNEL_DIR/drivers/ksu" \
-    "$KERNEL_DIR/kernel/KernelSU" \
-    "$KERNEL_DIR/kernel/KernelSU-Next"; do
+    "$KERNEL_DIR/drivers/kernelsu" ; do
     if [ -d "$KSU_PATH" ]; then
         KSU=1
         KERNELSU_VERSION="3.3.0"
@@ -279,11 +274,11 @@ exports()
 
 tg_post_msg()
 {
-	curl -s -X POST "$BOT_MSG_URL" -d chat_id="$CHATID" \
-	-d "disable_web_page_preview=true" \
-	-d "parse_mode=html" \
-	-d text="$1"
-
+curl -sS -X POST "$BOT_MSG_URL" \
+    -d "chat_id=$CHATID" \
+    -d "disable_web_page_preview=true" \
+    -d "parse_mode=HTML" \
+    --data-urlencode "text=$1"
 }
 
 ##----------------------------------------------------------##
