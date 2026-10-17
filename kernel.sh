@@ -356,36 +356,59 @@ build_kernel()
 
 gen_zip()
 {
-	msger -n "|| Zipping into a flashable zip ||"
-	mv "$KERNEL_DIR"/out/arch/arm64/boot/$FILES AnyKernel3/$FILES
-	if [ $BUILD_DTBO = 1 ]
-	then
-		mv "$KERNEL_DIR"/out/arch/arm64/boot/dtbo.img AnyKernel3/dtbo.img
-	fi
-	cdir AnyKernel3
-	zip -r $ZIPNAME-$DEVICE-$VER-"$WAKTU" . -x ".git*" -x "README.md" -x "*.zip"
+    msger -n "|| Zipping into a flashable zip ||"
+    mv "$KERNEL_DIR/out/arch/arm64/boot/$FILES" "AnyKernel3/$FILES"
+    if [ "$BUILD_DTBO" = 1 ]; then
+        mv "$KERNEL_DIR/out/arch/arm64/boot/dtbo.img" "AnyKernel3/dtbo.img"
+    fi
 
-	## Prepare a final zip variable
-	ZIP_FINAL="$ZIPNAME-$DEVICE-$VER-$WAKTU"
+    cdir AnyKernel3
 
-	if [ $SIGN = 1 ]
-	then
-		## Sign the zip before sending it to telegram
-		if [ "$PTTG" = 1 ]
- 		then
- 			msger -n "|| Signing Zip ||"
-			tg_post_msg "<code>Signing Zip file with AOSP keys..</code>"
- 		fi
-		curl -sLo zipsigner-3.0.jar https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar
-		java -jar zipsigner-3.0.jar "$ZIP_FINAL".zip "$ZIP_FINAL"-signed.zip
-		ZIP_FINAL="$ZIP_FINAL-signed"
-	fi
+    ## Prepare final ZIP filename
+    ZIP_FINAL="$ZIPNAME-$DEVICE-$VER-$WAKTU"
 
-	if [ "$PTTG" = 1 ]
- 	then
-		tg_post_build "$ZIP_FINAL.zip" "Build took : $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
-	fi
-	cd ..
+    ## Create ZIP with .zip extension
+    zip -r "$ZIP_FINAL.zip" . -x ".git*" -x "README.md" -x "*.zip"
+
+    ## Verify ZIP exists and is valid
+    if [ ! -s "$ZIP_FINAL.zip" ]; then
+        msger -e "ZIP file not found or empty: $ZIP_FINAL.zip"
+        return 1
+    fi
+
+    if ! unzip -t "$ZIP_FINAL.zip" >/dev/null 2>&1; then
+        msger -e "ZIP file is corrupted: $ZIP_FINAL.zip"
+        return 1
+    fi
+
+    ## Sign ZIP if enabled
+    if [ "$SIGN" = 1 ]; then
+        if [ "$PTTG" = 1 ]; then
+            msger -n "|| Signing Zip ||"
+            tg_post_msg "<code>Signing Zip file with AOSP keys..</code>"
+        fi
+
+        curl -fsSL -o zipsigner-3.0.jar \
+            "https://github.com/Magisk-Modules-Repo/zipsigner/raw/master/bin/zipsigner-3.0-dexed.jar"
+
+        java -jar zipsigner-3.0.jar \
+            "$ZIP_FINAL.zip" "$ZIP_FINAL-signed.zip"
+
+        ZIP_FINAL="$ZIP_FINAL-signed"
+
+        if [ ! -s "$ZIP_FINAL.zip" ]; then
+            msger -e "Signed ZIP was not created"
+            return 1
+        fi
+    fi
+
+    ## Upload ZIP to Telegram
+    if [ "$PTTG" = 1 ]; then
+        tg_post_build "$ZIP_FINAL.zip" \
+            "Build took: $((DIFF / 60)) minute(s) and $((DIFF % 60)) second(s)"
+    fi
+
+    cd ..
 }
 
 clone
