@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 -b 16-ksu $KERNEL && cd $KERNEL
-export LOCALVERSION=/r1.7+
+export LOCALVERSION=/r1.7.1+🐋
 
 # Bail out if script fails
 set -e
@@ -55,10 +55,10 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=1
-RELEASE=R1.7+
+RELEASE=R1.7.1+
 if [ $KSU = 1 ]
 then
-   VER="$RELEASE-NONEMOTE-KSUN"
+   VER="$RELEASE-KSUN"
 else
     VER="$RELEASE"
 fi
