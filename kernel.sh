@@ -69,7 +69,7 @@ ZIPNAME="Sea"
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
-HOSTR="r1.7+"
+HOSTR="SeaWy"
 
 # Architecture
 ARCH=arm64
