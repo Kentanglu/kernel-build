@@ -23,8 +23,8 @@ WORKDIR="$(pwd)"
 KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
-git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 -b 16-ksu $KERNEL && cd $KERNEL
-export LOCALVERSION=/r1.7.1+🐋
+git clone --single-branch --depth=1 https://github.com/Kentanglu/sea_kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
+export LOCALVERSION=/r2.0x🦐
 
 # Bail out if script fails
 set -e
