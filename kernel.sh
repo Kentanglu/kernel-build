@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/sea_kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
-export LOCALVERSION=/r2.1+🐚
+export LOCALVERSION=/r2.5+🪼
 
 # Bail out if script fails
 set -e
@@ -55,7 +55,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=1
-RELEASE=R2.1+
+RELEASE=R2.5+
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
@@ -69,7 +69,7 @@ ZIPNAME="Sea"
 # Build Author
 # Take care, it should be a universal and most probably, case-sensitive
 AUTHOR="Asyanx"
-HOSTR="SEaUP++"
+HOSTR="LTS"
 
 # Architecture
 ARCH=arm64
@@ -183,7 +183,7 @@ WAKTU=$(date +"%F-%S")
 	if [ $COMPILER = "clang" ]
 	then
 		TC_DIR=$KERNEL_DIR/clang-llvm
-		git clone --depth=1 https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r547379.git ${TC_DIR}
+		git clone --depth=1 https://gitlab.com/crdroidandroid/android_prebuilts_clang_host_linux-x86_clang-r563880c.git ${TC_DIR}
 		export LD_LIBRARY_PATH=$TC_DIR/bin/:$LD_LIBRARY_PATH
   		export LLVM=1
 		export LLVM_IAS=1
