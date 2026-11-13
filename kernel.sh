@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/sea_kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
-export LOCALVERSION=/r2.1+🦐
+export LOCALVERSION=/r2.1+🐚
 
 # Bail out if script fails
 set -e
@@ -55,7 +55,7 @@ BASEDIR="$(basename "$KERNEL_DIR")"
 
 # PATCH KERNELSU & RELEASE VERSION
 KSU=1
-RELEASE=R2.0+
+RELEASE=R2.1+
 if [ $KSU = 1 ]
 then
    VER="$RELEASE-KSUN"
