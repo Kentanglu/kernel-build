@@ -24,7 +24,7 @@ KERNEL="$WORKDIR/kernel"
 
 # Cloning Sources
 git clone --single-branch --depth=1 https://github.com/Kentanglu/kernel_xiaomi_sm6250 $KERNEL && cd $KERNEL
-export LOCALVERSION=/r1.7.2+🪼
+export LOCALVERSION=/r1.7.2+
 
 # Bail out if script fails
 set -e
@@ -58,7 +58,7 @@ KSU=1
 RELEASE=R1.7.2+
 if [ $KSU = 1 ]
 then
-   VER="$RELEASE-KSUN"
+   VER="$RELEASE-KSUN-NONEMOTE"
 else
     VER="$RELEASE"
 fi
